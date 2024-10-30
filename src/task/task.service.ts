@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entities/auth.entity';
+import { TaskStatus } from './utils/taskStatus.utils';
 
 @Injectable()
 export class TaskService {
@@ -14,18 +15,20 @@ export class TaskService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto, user: User) {
-    const { title, description, status } = createTaskDto;
+    const { title, description, status, completionDate } = createTaskDto;
     const task = this.taskRepository.create({
       title,
       description,
       status,
       user,
+      completionDate,
     });
     return this.taskRepository.save(task);
   }
 
-  findAll(user: User) {
-    return this.taskRepository.find({ where: { user } });
+  async findAll(user: User, status: TaskStatus) {
+    if (!status) return this.taskRepository.find({ where: { user } });
+    return this.taskRepository.find({ where: { user, status } });
   }
 
   async findOneById(id: string, user: User) {
@@ -35,14 +38,15 @@ export class TaskService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto, user: User) {
-    const task = this.findOneById(id, user);
+    const task = await this.findOneById(id, user);
 
-    const updatedTask = {
-      ...task,
-      ...updateTaskDto,
-    };
+    const { title, description, status } = updateTaskDto;
 
-    return this.taskRepository.save(updatedTask);
+    if (title) task.title = title;
+    if (description) task.description = description;
+    if (status) task.status = status;
+
+    return this.taskRepository.save(task);
   }
 
   async remove(id: string, user: User) {
