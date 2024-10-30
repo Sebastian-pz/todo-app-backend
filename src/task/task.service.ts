@@ -40,11 +40,12 @@ export class TaskService {
   async update(id: string, updateTaskDto: UpdateTaskDto, user: User) {
     const task = await this.findOneById(id, user);
 
-    const { title, description, status } = updateTaskDto;
+    const { title, description, status, completionDate } = updateTaskDto;
 
     if (title) task.title = title;
     if (description) task.description = description;
     if (status) task.status = status;
+    if (completionDate) task.completionDate = completionDate;
 
     return this.taskRepository.save(task);
   }
