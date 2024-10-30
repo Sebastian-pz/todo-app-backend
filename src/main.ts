@@ -12,6 +12,8 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors();
+
   // !Todo - Implement env variables for port
   await app.listen(3000);
 }
