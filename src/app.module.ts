@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ConfigModule } from '@nestjs/config';
+
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
@@ -8,6 +10,7 @@ import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
