@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Task } from 'src/task/entities/task.entity';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 @Entity()
@@ -14,4 +15,7 @@ export class User {
 
   @Column({ unique: true })
   email: string;
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 }
