@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
@@ -16,6 +17,7 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { User } from 'src/auth/entities/auth.entity';
+import { TaskStatus } from './utils/taskStatus.utils';
 
 @Controller('tasks')
 @UseGuards(AuthGuard('jwt'))
@@ -31,8 +33,8 @@ export class TaskController {
   }
 
   @Get()
-  findAll(@Req() req: Request) {
-    return this.taskService.findAll(req.user as User);
+  findAll(@Query('status') status: TaskStatus, @Req() req: Request) {
+    return this.taskService.findAll(req.user as User, status);
   }
 
   @Get(':id')
